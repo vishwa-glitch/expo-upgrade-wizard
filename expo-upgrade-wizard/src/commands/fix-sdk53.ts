@@ -5,6 +5,7 @@ import { log } from '../utils/logger';
 import { getMetroConfigFix } from '../data/sdk53-breaking-changes';
 import inquirer from 'inquirer';
 import { execSync } from 'child_process';
+import { detectHermesErrors, autoFixHermesErrors } from './fix-hermes-errors';
 
 interface SDK53Issue {
   name: string;
@@ -23,9 +24,40 @@ export async function fixSDK53Command(options: any = {}): Promise<void> {
     const issues = await detectSDK53Issues(projectRoot);
     const detectedIssues = issues.filter(i => i.detected);
     
-    if (detectedIssues.length === 0) {
+    // Also detect Hermes-specific errors
+    const hermesErrors = await detectHermesErrors(projectRoot);
+    const detectedHermesErrors = hermesErrors.filter(e => e.detected);
+    
+    if (detectedIssues.length === 0 && detectedHermesErrors.length === 0) {
       log.success('✅ No SDK 53 issues detected!');
       return;
+    }
+    
+    // Show Hermes errors if detected
+    if (detectedHermesErrors.length > 0) {
+      log.section(`🔥 Detected ${detectedHermesErrors.length} Hermes-related Issues`);
+      console.log(chalk.yellow('\nThese are common Hermes errors in SDK 53:'));
+      detectedHermesErrors.forEach((error, index) => {
+        const severityColor = error.severity === 'CRITICAL' ? chalk.red :
+                            error.severity === 'HIGH' ? chalk.yellow :
+                            chalk.blue;
+        console.log(severityColor(`  ${index + 1}. ${error.type}`));
+        console.log(`     ${error.message}`);
+        if (error.autoFixable) {
+          console.log(chalk.green(`     ✓ Auto-fixable`));
+        }
+      });
+      
+      const { fixHermes } = await inquirer.prompt([{
+        type: 'confirm',
+        name: 'fixHermes',
+        message: 'Would you like to auto-fix Hermes errors?',
+        default: true
+      }]);
+      
+      if (fixHermes) {
+        await autoFixHermesErrors(detectedHermesErrors, options);
+      }
     }
     
     // Display detected issues

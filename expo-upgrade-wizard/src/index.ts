@@ -14,6 +14,7 @@ import { checkImprovedCommand } from "./commands/check-improved";
 import { upgradeCompleteCommand } from "./commands/upgrade-complete";
 import { fixDeprecatedCommand } from "./commands/fix-deprecated";
 import { fixSDK53Command } from "./commands/fix-sdk53";
+import { fixHermesErrorsCommand } from "./commands/fix-hermes-errors";
 import { checkReact19Command } from "./commands/check-react19";
 import { createStateCommand } from "./commands/state";
 import { validateReactCommand } from "./commands/validate-react";
@@ -187,6 +188,24 @@ program
     }
   });
 
+// Fix Hermes errors command - comprehensive SDK 53 Hermes error detection and auto-fixing
+program
+  .command("fix-hermes")
+  .description(
+    "Detect and auto-fix Hermes-related errors for Expo SDK 53 (styled-components, Firebase, Metro config, etc.)"
+  )
+  .option("--dry-run", "Preview changes without applying")
+  .option("--skip-script", "Skip generating fix script")
+  .option("-v, --verbose", "Show detailed output")
+  .action(async (options) => {
+    try {
+      await fixHermesErrorsCommand(options);
+    } catch (error) {
+      logger.error("Fix Hermes errors failed:", error);
+      process.exit(1);
+    }
+  });
+
 // Check React 19 compatibility command
 program
   .command("check-react19")
@@ -308,6 +327,7 @@ async function runInteractiveMode() {
     "state",
     "fix-deprecated",
     "fix-sdk53",
+    "fix-hermes",
     "check-react19",
     "validate-react",
     "guide-sdk50",

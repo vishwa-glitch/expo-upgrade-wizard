@@ -115,20 +115,20 @@ export async function upgradeCompleteCommand(
     if (cloudDetection.isCloudStorage && !options.force) {
       console.log(
         boxen(
-          chalk.yellow.bold(`⚠️  ${cloudDetection.provider} Detected!\n\n`) +
-            `Your project is located in ${cloudDetection.provider}:\n` +
+          chalk.yellow.bold('⚠️  ' + cloudDetection.provider + ' Detected!\n\n') +
+            'Your project is located in ' + cloudDetection.provider + ':\n' +
             chalk.gray(projectPath) +
             "\n\n" +
-            `${cloudDetection.provider} file syncing can cause npm installation failures.\n` +
+            cloudDetection.provider + ' file syncing can cause npm installation failures.\n' +
             chalk.red(
               "This is a common cause of EPERM errors during upgrades.\n\n"
             ) +
             chalk.white("Recommended actions:\n") +
-            `  1. Move project to: ${chalk.cyan(
+            '  1. Move project to: ' + chalk.cyan(
               cloudDetection.recommendedPath
-            )}\n` +
-            `  2. Or pause ${cloudDetection.provider} sync during upgrade\n` +
-            `  3. Or use --force to continue anyway (not recommended)`,
+            ) + '\n' +
+            '  2. Or pause ' + cloudDetection.provider + ' sync during upgrade\n' +
+            '  3. Or use --force to continue anyway (not recommended)',
           { padding: 1, borderColor: "yellow", borderStyle: "round" }
         )
       );
@@ -137,22 +137,22 @@ export async function upgradeCompleteCommand(
         {
           type: "confirm",
           name: "proceed",
-          message: `Continue upgrade in ${cloudDetection.provider}? (May fail with file locking errors)`,
+          message: 'Continue upgrade in ' + cloudDetection.provider + '? (May fail with file locking errors)',
           default: false,
         },
       ]);
 
       if (!proceed) {
-        log.info(`\n💡 To move your project safely:`);
-        log.bullet(`1. Copy project to: ${cloudDetection.recommendedPath}`);
-        log.bullet(`2. Delete node_modules in the new location`);
-        log.bullet(`3. Run: npm install`);
-        log.bullet(`4. Then run the upgrade wizard again`);
+        log.info('\n💡 To move your project safely:');
+        log.bullet('1. Copy project to: ' + cloudDetection.recommendedPath);
+        log.bullet('2. Delete node_modules in the new location');
+        log.bullet('3. Run: npm install');
+        log.bullet('4. Then run the upgrade wizard again');
         process.exit(0);
       }
 
       log.warn(
-        `Proceeding with upgrade in ${cloudDetection.provider} - watch for file locking errors`
+        'Proceeding with upgrade in ' + cloudDetection.provider + ' - watch for file locking errors'
       );
     }
 
@@ -183,25 +183,30 @@ export async function upgradeCompleteCommand(
     const packageManager =
       options.packageManager || analysis.packageManager || "npm";
 
-    // Step 3: Determine target SDK
-    let targetSdk = options.target;
-
-    if (!targetSdk) {
-      targetSdk = await promptForTargetSdk();
-    }
-
-    // Validate target SDK
-    const targetSdkInfo = getSdkInfo(targetSdk!);
-    if (!targetSdkInfo) {
-      log.error(`SDK ${targetSdk} is not supported or doesn't exist`);
+    // Step 3: Validate current SDK version is 52
+    if (analysis.currentSdkVersion !== "52") {
+      log.error(
+        chalk.red.bold("\n⛔ SDK 52 Required\n")
+      );
+      log.error(
+        `This tool only supports upgrading from Expo SDK 52 to SDK 53.\n` +
+        'Current SDK version is: ' + chalk.yellow(analysis.currentSdkVersion || 'unknown')
+      );
+      
+      if (analysis.currentSdkVersion && parseInt(analysis.currentSdkVersion) < 52) {
+        log.info("\n💡 Please upgrade to SDK 52 first before using this tool.");
+      } else if (analysis.currentSdkVersion === "53") {
+        log.info("\n✅ You're already on SDK 53!");
+      } else if (analysis.currentSdkVersion && parseInt(analysis.currentSdkVersion) > 53) {
+        log.info("\n⚠️  Your SDK version is newer than 53.");
+      }
+      
       process.exit(1);
     }
 
-    // Check if already on target SDK
-    if (analysis.currentSdkVersion === targetSdk) {
-      log.success(`✅ Already on SDK ${targetSdk}!`);
-      return;
-    }
+    // Set target SDK to 53 (the only supported upgrade path)
+    const targetSdk = "53";
+    log.info(chalk.cyan(`\n🎯 Upgrading from SDK 52 to SDK 53"));
 
     // Step 4: Show upgrade path
     const upgradePath = getUpgradePath(
@@ -211,8 +216,7 @@ export async function upgradeCompleteCommand(
 
     if (upgradePath.length > 1) {
       log.section("🗺️ Upgrade Path");
-      console.log(`  ${upgradePath.join(" → ")}`);
-
+      console.log('  ' + upgradePath.join(' → '));
     }
 
     // Step 4: Analyze breaking changes
@@ -281,6 +285,29 @@ export async function upgradeCompleteCommand(
     // Step 9: Run interactive auto-fixes BEFORE installation
     log.section("🔧 Detecting Issues and Auto-Fixes");
     
+    // Include Hermes error detection and fixes for SDK 53
+    const { detectHermesErrors, autoFixHermesErrors } = await import('./fix-hermes-errors');
+    const hermesErrors = await detectHermesErrors(projectPath);
+    const detectedHermesErrors = hermesErrors.filter(e => e.detected);
+    
+    if (detectedHermesErrors.length > 0) {
+      log.warn('🔥 Detected ' + detectedHermesErrors.length + ' Hermes-related issues for SDK 53');
+      const autoFixableHermes = detectedHermesErrors.filter(e => e.autoFixable);
+      
+      if (autoFixableHermes.length > 0) {
+        const { fixHermes } = await inquirer.prompt([{
+          type: 'confirm',
+          name: 'fixHermes',
+          message: 'Would you like to auto-fix Hermes errors?',
+          default: true
+        }]);
+        
+        if (fixHermes) {
+          await autoFixHermesErrors(autoFixableHermes, { dryRun: options.dryRun });
+        }
+      }
+    }
+    
     const { collectAutoFixes } = await import("../utils/collect-auto-fixes");
     const { InteractiveAutoFix } = await import("../utils/interactive-auto-fix");
     
@@ -290,16 +317,16 @@ export async function upgradeCompleteCommand(
     const fixedFiles: Map<string, string> = new Map();
     
     if (autoFixIssues.length > 0) {
-      log.info(`Found ${autoFixIssues.length} issue${autoFixIssues.length > 1 ? 's' : ''} that can be auto-fixed`);
+      log.info('Found ' + autoFixIssues.length + ' issue' + (autoFixIssues.length > 1 ? 's' : '') + ' that can be auto-fixed');
       console.log();
       
       const interactiveFixer = new InteractiveAutoFix(projectPath);
       const { fixed, skipped } = await interactiveFixer.runAllFixes(autoFixIssues);
       
       console.log();
-      log.success(`✅ Fixed ${fixed} issue${fixed !== 1 ? 's' : ''}`);
+      log.success('✅ Fixed ' + fixed + ' issue' + (fixed !== 1 ? 's' : ''));
       if (skipped > 0) {
-        log.info(`⏭️  Skipped ${skipped} issue${skipped !== 1 ? 's' : ''} (manual fix required)`);
+        log.info('⏭️  Skipped ' + skipped + ' issue' + (skipped !== 1 ? 's' : '') + ' (manual fix required)');
       }
       
       // Save fixed files content to restore after installation
@@ -309,12 +336,12 @@ export async function upgradeCompleteCommand(
         if (await fs.pathExists(filePath)) {
           const content = await fs.readFile(filePath, 'utf-8');
           fixedFiles.set(issue.file, content);
-          log.debug(`Saved ${issue.file} (${content.length} bytes)`);
+          log.debug('Saved ' + issue.file + ' (' + content.length + ' bytes)');
         } else {
-          log.warn(`File not found for saving: ${issue.file}`);
+          log.warn('File not found for saving: ' + issue.file);
         }
       }
-      log.success(`Saved ${fixedFiles.size} fixed files for restoration`);
+      log.success('Saved ' + fixedFiles.size + ' fixed files for restoration');
       
       console.log();
     } else {
@@ -332,11 +359,11 @@ export async function upgradeCompleteCommand(
 
     console.log(
       boxen(
-        chalk.cyan.bold(`🚀 Upgrading to SDK ${targetSdk}\n\n`) +
-          chalk.white(`From: SDK ${analysis.currentSdkVersion}\n`) +
-          chalk.white(`To: SDK ${targetSdk}\n`) +
-          chalk.white(`Packages to update: ~${packagesCount}\n`) +
-          chalk.white(`Strategy: ${strategy}\n\n`) +
+        chalk.cyan.bold('🚀 Upgrading to SDK ' + targetSdk + '\n\n') +
+          chalk.white('From: SDK ' + analysis.currentSdkVersion + '\n') +
+          chalk.white('To: SDK ' + targetSdk + '\n') +
+          chalk.white('Packages to update: ~' + packagesCount + '\n') +
+          chalk.white('Strategy: ' + strategy + '\n\n') +
           chalk.gray("This may take a few minutes..."),
         { padding: 1, borderColor: "cyan", borderStyle: "round" }
       )
@@ -405,27 +432,27 @@ export async function upgradeCompleteCommand(
           );
         }
       }
-    }
 
     // Show upgrade completion summary
     const formatDuration = (ms: number): string => {
-      const seconds = Math.floor(ms / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = seconds % 60;
-      if (minutes > 0) {
-        return `${minutes}m ${remainingSeconds}s`;
+      const hours = Math.floor(ms / 3600);
+      const minutes = Math.floor((ms % 3600) / 60);
+      const seconds = Math.floor(ms % 60);
+
+      if (hours > 0) {
+        return hours + 'h ' + minutes + 'm ' + seconds + 's';
+      } else if (minutes > 0) {
+        return minutes + 'm ' + seconds + 's';
       }
-      return `${seconds}s`;
+      return ms + ' seconds';
     };
 
     const modifiedFilesCount = context.modifiedFiles?.length || 0;
     console.log(
       boxen(
         chalk.green.bold("✓ Upgrade Complete!\n\n") +
-          chalk.white(`Total time: ${formatDuration(upgradeDuration)}\n`) +
-          chalk.white(`Files modified: ${modifiedFilesCount}\n`) +
-          chalk.white(`SDK: ${analysis.currentSdkVersion} → ${targetSdk}\n\n`) +
-          chalk.cyan("Next steps:\n") +
+          chalk.yellow('  Total time: ' + formatDuration(upgradeDuration) + '\n') +
+        chalk.yellow('  Files modified: ' + modifiedFilesCount + '\n') +
           chalk.gray("  • Review changes: git diff\n") +
           chalk.gray("  • Validate project: npx expo-doctor\n") +
           chalk.gray("  • Test your app: npx expo start"),
@@ -468,8 +495,8 @@ export async function upgradeCompleteCommand(
         console.log(
           boxen(
             chalk.cyan.bold("📦 React Configuration\n\n") +
-              chalk.white(`React: ${actualReactVersion}\n`) +
-              chalk.white(`React Native: ${actualRNVersion || "unknown"}\n\n`) +
+              chalk.white('React: ' + actualReactVersion + '\n') +
+              chalk.white('React Native: ' + (actualRNVersion || "unknown") + '\n\n') +
               reactMessage,
             { padding: 1, borderColor: "cyan", borderStyle: "round", margin: 1 }
           )
@@ -484,9 +511,9 @@ export async function upgradeCompleteCommand(
       log.section("📝 Modified Files");
       const uniqueFiles = [...new Set(context.modifiedFiles)];
       log.info(
-        `${uniqueFiles.length} file${
-          uniqueFiles.length > 1 ? "s" : ""
-        } modified during upgrade:\n`
+        uniqueFiles.length + ' file' +
+          (uniqueFiles.length > 1 ? "s" : "") +
+        ' modified during upgrade:\n'
       );
 
       uniqueFiles.forEach((file) => {
@@ -501,9 +528,9 @@ export async function upgradeCompleteCommand(
         if (nonWarnings.length > 0) {
           console.log(
             chalk.gray(
-              `\n  app.json: ${nonWarnings.length} fix${
-                nonWarnings.length > 1 ? "es" : ""
-              } applied`
+              '\n  app.json: ' + nonWarnings.length + ' fix' +
+                (nonWarnings.length > 1 ? "es" : "") +
+              ' applied'
             )
           );
         }
@@ -519,17 +546,17 @@ export async function upgradeCompleteCommand(
 
           if (byType.removed.length > 0) {
             byType.removed.forEach((c) =>
-              console.log(chalk.gray(`    ➖ ${c.message}`))
+              console.log(chalk.gray('    ➖ ' + c.message))
             );
           }
           if (byType.added.length > 0) {
             byType.added.forEach((c) =>
-              console.log(chalk.gray(`    ➕ ${c.message}`))
+              console.log(chalk.gray('    ➕ ' + c.message))
             );
           }
           if (byType.fixed.length > 0) {
             byType.fixed.forEach((c) =>
-              console.log(chalk.gray(`    ✅ ${c.message}`))
+              console.log(chalk.gray('    ✅ ' + c.message))
             );
           }
         }
@@ -568,32 +595,7 @@ export async function upgradeCompleteCommand(
 }
 
 // Helper functions
-async function promptForTargetSdk(): Promise<string> {
-  const availableVersions = getAvailableSdkVersions();
-  const latestStable = getLatestSdkVersion();
-
-  // Incremental upgrade recommendation removed
-
-  const { selectedTarget } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "selectedTarget",
-      message: "Select target SDK version:",
-      choices: [
-        { name: `SDK ${latestStable} (Latest Stable)`, value: latestStable },
-        ...availableVersions
-          .filter((v) => v !== latestStable) // Exclude latest stable to avoid duplication
-          .slice(0, 3)
-          .map((v) => ({
-            name: `SDK ${v}`,
-            value: v,
-          })),
-      ],
-    },
-  ]);
-
-  return selectedTarget;
-}
+// Removed promptForTargetSdk - no longer needed as we only support SDK 52 to 53
 
 async function promptForStrategy(): Promise<
   "conservative" | "recommended" | "aggressive"
@@ -670,7 +672,7 @@ async function confirmUpgrade(
       type: "confirm",
       name: "confirm",
       message: chalk.bold(
-        `Proceed with upgrade from SDK ${currentSdk} to SDK ${targetSdk}?`
+        'Proceed with upgrade from SDK ' + currentSdk + ' to SDK ' + targetSdk + '?'
       ),
       default: true,
     },
@@ -706,20 +708,20 @@ function displayBreakingChanges(
     const typedStats = stats as { total: number; autoFixable: number };
     const autoFixText =
       typedStats.autoFixable > 0
-        ? chalk.green(`✓ ${typedStats.autoFixable}/${typedStats.total}`)
+        ? chalk.green('✓ ' + typedStats.autoFixable + '/' + typedStats.total)
         : chalk.red("✗");
 
-    table.push([pkg, `${typedStats.total} change(s)`, autoFixText]);
+    table.push([pkg, typedStats.total + ' change(s)', autoFixText]);
   });
 
   console.log(table.toString());
   console.log();
 
   if (autoFixable.length > 0) {
-    log.bullet(`${autoFixable.length} changes can be fixed automatically`);
+    log.bullet(autoFixable.length + ' changes can be fixed automatically');
   }
   if (manualChanges.length > 0) {
-    log.bullet(`${manualChanges.length} changes require manual intervention`);
+    log.bullet(manualChanges.length + ' changes require manual intervention');
   }
 }
 
@@ -740,7 +742,7 @@ async function prepareBackup(
       if (hasChanges && !options.force) {
         console.log(
           boxen(
-            chalk.yellow("⚠️  Uncommitted changes detected!\n\n") +
+            chalk.yellow("  Uncommitted changes detected!\n\n") +
               "Please commit or stash your changes before upgrading.\n" +
               "Use --force to upgrade anyway (not recommended).",
             { padding: 1, borderColor: "yellow", borderStyle: "round" }
@@ -783,15 +785,13 @@ async function prepareBackup(
       await stateManager.initialize();
       await stateManager.captureCurrentState("pre-upgrade");
 
-      log.success(
-        `State backup created at: ${projectPath}/.expo-upgrade-wizard/state/`
-      );
+      log.info('\n      State backup created at ' + lastStateFile.split('/').pop());
     } catch (error) {
       log.warn(
         "Failed to create state backup, continuing with git backup only"
       );
       if (error instanceof Error) {
-        log.debug(`State backup error: ${error.message}`);
+        log.error('\n      State backup error: ' + error.message);
       }
     }
   }
@@ -803,7 +803,7 @@ async function createBackup(
   analysis: any,
   backupMethod: "git" | "zip" | "none"
 ): Promise<BackupData> {
-  log.section("💾 Creating backup...");
+  log.section(" Creating backup...");
 
   const packageJsonPath = path.join(analysis.projectPath, "package.json");
   const appJsonPath = path.join(analysis.projectPath, "app.json");
@@ -893,7 +893,7 @@ async function executeUpgrade(
           for (const lockFile of lockFiles) {
             const lockFilePath = path.join(analysis.projectPath, lockFile);
             if (await fs.pathExists(lockFilePath)) {
-              log.info(`Removing ${lockFile}...`);
+              log.info('Removing ' + lockFile + '...');
               await fs.remove(lockFilePath);
             }
           }
@@ -988,18 +988,18 @@ async function executeUpgrade(
             return;
           }
           
-          log.info(`Restoring ${fixedFiles.size} fixed files before installation...`);
+          task.output = 'Restoring ' + fixedFiles.size + ' fixed files before installation...';
           
           let restoredCount = 0;
           
           for (const [file, savedContent] of fixedFiles.entries()) {
             const filePath = path.join(analysis.projectPath, file);
             
-            log.debug(`Restoring ${file}...`);
+            task.output = 'Restoring ' + file + '...';
             
             // Check if file still exists
             if (!(await fs.pathExists(filePath))) {
-              log.warn(`File missing: ${file}`);
+              log.warn('File missing: ' + file);
               continue;
             }
             
@@ -1012,8 +1012,8 @@ async function executeUpgrade(
             }
           }
           
-          log.success(`Restored ${restoredCount} fixed files before installation`);
-          task.title = `Restored ${restoredCount} fixed configuration file${restoredCount > 1 ? 's' : ''} (before installation)`;
+          log.success('Restored ' + restoredCount + ' fixed files before installation');
+          task.title = 'Restored ' + restoredCount + ' fixed configuration file' + (restoredCount > 1 ? 's' : '') + ' (before installation)';
         },
       },
       {
@@ -1070,7 +1070,7 @@ async function executeUpgrade(
 
           // Show installation progress info
           task.output = chalk.gray(
-            `Installing packages with ${packageManager}... This may take several minutes`
+            'Installing packages with ' + packageManager + '... This may take several minutes'
           );
 
           // Use ExpoInstallUpgrader - it uses expo install --fix which gets correct versions
@@ -1088,11 +1088,11 @@ async function executeUpgrade(
 
           if (!result.success) {
             const errorDetails = result.errors.join("\n");
-            throw new Error(`Expo install upgrade failed:\n${errorDetails}`);
+            throw new Error('Expo install upgrade failed:\n' + errorDetails);
           }
 
           task.output = chalk.gray(
-            `Installed ${result.updated.length} packages`
+            'Installed ' + result.updated.length + ' packages'
           );
 
           ctx.packageChanges = {
@@ -1230,7 +1230,7 @@ async function installDependencies(
     try {
       await execa(packageManager, ["--version"], { timeout: 5000 });
     } catch (error) {
-      log.warn(`${packageManager} is not available, falling back to npm`);
+      log.warn(packageManager + ' is not available, falling back to npm');
       actualPM = "npm";
     }
   }
@@ -1246,7 +1246,7 @@ async function installDependencies(
     const lockFile = path.join(process.cwd(), lockFiles[actualPM]);
     if (await fs.pathExists(lockFile)) {
       await fs.remove(lockFile);
-      log.info(`Removed ${lockFiles[actualPM]} for clean install`);
+      log.info('Removed ' + lockFiles[actualPM] + ' for clean install');
     }
   }
 
@@ -1274,7 +1274,7 @@ async function installDependencies(
 
     try {
       if (i > 0) {
-        log.warn(`Trying alternative install method: ${cmd} ${args.join(" ")}`);
+        log.warn('Trying alternative install method: ' + cmd + ' ' + args.join(' '));
       }
 
       // Use inherit for real-time output, but also capture for error reporting
@@ -1302,9 +1302,8 @@ async function installDependencies(
         const peerDepMatch = errorSnippet.match(/error.*peer.*dependencies?/i);
         const conflictMatch = errorSnippet.match(/conflict.*with/i);
 
-        let helpfulMessage = `${cmd} ${args.join(" ")} failed with exit code ${
-          error.exitCode
-        }`;
+        let helpfulMessage = cmd + ' ' + args.join(' ') + ' failed with exit code ' +
+          error.exitCode;
 
         if (peerDepMatch || conflictMatch) {
           helpfulMessage +=
@@ -1315,7 +1314,7 @@ async function installDependencies(
         }
 
         if (errorSnippet) {
-          helpfulMessage += `\n\nLast error output:\n${errorSnippet}`;
+          helpfulMessage += '\n\nLast error output:\n' + errorSnippet;
         }
 
         const detailedError = new Error(helpfulMessage);
@@ -1324,7 +1323,8 @@ async function installDependencies(
 
       // Otherwise, log and try next method
       log.warn(
-        `Install failed with exit code ${error.exitCode}, trying alternative method...`
+        cmd + ' ' + args.join(' ') + ' failed with exit code ' +
+          error.exitCode + ', trying alternative method...'
       );
     }
   }
@@ -1366,13 +1366,13 @@ async function verifyInstallation(
 
     if (installedMajor !== expectedMajor) {
       log.error(
-        `Expo version mismatch! Expected SDK ${targetSdk} (expo ${expectedVersion}), got expo ${installedVersion}`
+        'Expo version mismatch! Expected SDK ' + targetSdk + ' (expo ' + expectedVersion + '), got expo ' + installedVersion
       );
       return false;
     }
 
     log.success(
-      `Verified expo@${installedVersion} is installed (SDK ${targetSdk})`
+      'Verified expo@' + installedVersion + ' is installed (SDK ' + targetSdk + ')'
     );
 
     const rnModulePath = path.join(
@@ -1389,7 +1389,7 @@ async function verifyInstallation(
       // Only check major version match (0.76.x vs 0.79.x both work for SDK 53)
       if (installedRNMajor !== expectedRNMajor) {
         log.error(
-          `React Native major version mismatch! Expected ${expectedRN}, got ${installedRN.version}`
+          'React Native major version mismatch! Expected ' + expectedRN + ', got ' + installedRN.version
         );
         return false;
       }
@@ -1403,7 +1403,7 @@ async function verifyInstallation(
 
       if (installedRNMinor !== expectedRNMinor) {
         log.info(
-          `React Native version: ${installedRN.version} (SDK ${targetSdk} default is ${expectedRN})`
+          'React Native version: ' + installedRN.version + ' (SDK ' + targetSdk + ' default is ' + expectedRN + ')'
         );
 
         // Special case for SDK 53 with RN 0.79.x (Hermes fix)
@@ -1414,7 +1414,7 @@ async function verifyInstallation(
         }
       } else {
         log.success(
-          `Verified react-native@${installedRN.version} is installed`
+          'Verified react-native@' + installedRN.version + ' is installed'
         );
       }
     }
@@ -1502,11 +1502,11 @@ function formatDoctorOutput(output: string): string {
   // Format header with summary
   if (passedCount > 0 || warningCount > 0) {
     formatted += chalk.gray(
-      `\n${passedCount}/${passedCount + warningCount} checks passed`
+      '\n' + passedCount + '/' + (passedCount + warningCount) + ' checks passed'
     );
     if (warningCount > 0) {
       formatted += chalk.yellow(
-        `, ${warningCount} warning${warningCount > 1 ? "s" : ""}`
+        ', ' + warningCount + ' warning' + (warningCount > 1 ? "s" : "")
       );
     }
     formatted += "\n";
@@ -1521,7 +1521,7 @@ function formatDoctorOutput(output: string): string {
       const icon = isCritical ? chalk.red("⚠") : chalk.yellow("⚠");
 
       // Warning title with better spacing
-      formatted += `\n${icon}  ${chalk.bold.white(warning.title)}\n\n`;
+      formatted += '\n' + icon + '  ' + chalk.bold.white(warning.title) + '\n\n';
 
       // Show details with proper indentation
       if (warning.details.length > 0) {
@@ -1537,17 +1537,17 @@ function formatDoctorOutput(output: string): string {
             let currentLine = "";
             words.forEach((word) => {
               if ((currentLine + word).length > 80) {
-                formatted += chalk.gray(`   ${currentLine.trim()}\n`);
+                formatted += chalk.gray('   ' + currentLine.trim() + '\n');
                 currentLine = word + " ";
               } else {
                 currentLine += word + " ";
               }
             });
             if (currentLine.trim()) {
-              formatted += chalk.gray(`   ${currentLine.trim()}\n`);
+              formatted += chalk.gray('   ' + currentLine.trim() + '\n');
             }
           } else {
-            formatted += chalk.gray(`   ${detail}\n`);
+            formatted += chalk.gray('   ' + detail + '\n');
           }
         });
       }
@@ -1595,7 +1595,7 @@ function generateUpgradeReport(
   });
 
   reportTable.push(
-    ["Duration", `${duration} seconds`],
+    ["Duration", duration + ' seconds'],
     ["Packages Updated", context.packageChanges?.updated.length || 0],
     ["Packages Removed", context.packageChanges?.removed.length || 0],
     ["Files Modified", context.modifiedFiles?.length || 0],
@@ -1608,7 +1608,7 @@ function generateUpgradeReport(
   if (context.packageChanges?.removed?.length > 0) {
     log.section("🗑️  Removed Deprecated Packages");
     context.packageChanges.removed.forEach((pkg: string) => {
-      log.bullet(`${pkg} (no longer needed in SDK ${targetSdk})`);
+      log.bullet('   ' + pkg + ' no longer needed (SDK ' + targetSdk + ')');
     });
   }
 
@@ -1664,11 +1664,11 @@ function displayManualSteps(manualChanges: any[]): void {
 }
 
 function displayChange(change: any): void {
-  console.log(chalk.yellow(`  ${change.package}:`));
-  console.log(`    ${change.description}`);
+  console.log(chalk.yellow('  ' + change.package + ':'));
+  console.log('    ' + change.description);
   if (change.manualSteps) {
     change.manualSteps.forEach((step: string) => {
-      console.log(`    ${chalk.gray("•")} ${step}`);
+      console.log('    ' + chalk.gray("•") + ' ' + step);
     });
   }
 }
@@ -1685,8 +1685,8 @@ function displayNextSteps(
   const nextSteps = [
     "Review the changes in your code editor",
     "Test your app thoroughly",
-    "Run `npm start` or `yarn start` to test in development",
-    "If using EAS Build, run `eas build` to test production builds",
+    "Run npm start or yarn start to test in development",
+    "If using EAS Build, run 'eas build' to test production builds",
   ];
 
   if (manualChanges.length > 0) {
@@ -1694,7 +1694,7 @@ function displayNextSteps(
   }
 
   if (!context.doctorPassed && !context.doctorOutput) {
-    nextSteps.unshift("Run `npx expo-doctor` to check for any issues");
+    nextSteps.unshift("Run 'npx expo-doctor' to check for any issues");
   }
 
   nextSteps.forEach((step) => {
@@ -1848,8 +1848,8 @@ async function handleUpgradeError(
     boxen(
       chalk.red.bold("❌ Upgrade Failed\n\n") +
         (cloudDetection.isCloudStorage && isCloudError
-          ? chalk.yellow(`${cloudDetection.provider} file locking detected\n`) +
-            `${cloudDetection.provider} is preventing npm from modifying files.\n\n`
+          ? chalk.yellow(cloudDetection.provider + ' file locking detected\n') +
+            cloudDetection.provider + ' is preventing npm from modifying files.\n\n'
           : "") +
         (isPeerDepError
           ? chalk.yellow("Peer dependency conflict detected\n") +
@@ -1859,7 +1859,7 @@ async function handleUpgradeError(
           ? chalk.yellow("Yarn is not installed\n") +
             "Your project is trying to use yarn but it's not available.\n\n"
           : "") +
-        chalk.white(`Error: ${errorMessage}`),
+        chalk.white('Error: ' + errorMessage),
       { padding: 1, borderColor: "red", borderStyle: "round" }
     )
   );
@@ -1930,7 +1930,7 @@ async function handleUpgradeError(
 
       if (backupData.backupBranch) {
         log.info(
-          `\nGit backup also available: ${chalk.cyan(backupData.backupBranch)}`
+          '\nGit backup also available: ' + chalk.cyan(backupData.backupBranch)
         );
       }
     } catch (rollbackError) {
@@ -1941,7 +1941,7 @@ async function handleUpgradeError(
           chalk.yellow.bold("⚠️  Manual Recovery Required\n\n") +
             "Please restore your project manually:\n\n" +
             (backupData.backupBranch
-              ? `1. Git restore: git checkout ${backupData.backupBranch}\n`
+              ? '1. Git restore: git checkout ' + backupData.backupBranch + '\n'
               : "1. Git restore: git checkout HEAD -- package.json app.json\n") +
             "2. Or use: expo-upgrade-wizard state rollback\n" +
             "3. Clean install: rm -rf node_modules package-lock.json && npm install",
@@ -1970,33 +1970,33 @@ async function handleUpgradeError(
     log.section("💡 Why This Happened");
     console.log(
       chalk.gray(
-        `Your project is located in ${cloudDetection.provider}, which actively syncs files.\n` +
-          `This causes file locking issues when npm tries to modify node_modules.\n` +
-          `The EPERM (operation not permitted) errors indicate files are locked by ${cloudDetection.provider}.\n`
+        'Your project is located in ' + cloudDetection.provider + ', which actively syncs files.\n' +
+          'This causes file locking issues when npm tries to modify node_modules.\n' +
+          'The EPERM (operation not permitted) errors indicate files are locked by ' + cloudDetection.provider + '.\n'
       )
     );
 
     log.section("🔧 Recommended Solutions");
     log.bullet(
-      chalk.green(`Move your project outside ${cloudDetection.provider}:`) +
-        `\n     ${chalk.cyan(
+      chalk.green('Move your project outside ' + cloudDetection.provider + ':') +
+        '\n     ' + chalk.cyan(
           cloudDetection.recommendedPath ||
             "C:\\Users\\YourName\\Projects\\your-project"
-        )}`
+        )
     );
-    log.bullet(`Pause ${cloudDetection.provider} sync during the upgrade`);
+    log.bullet('Pause ' + cloudDetection.provider + ' sync during the upgrade');
     log.bullet(
-      `Exclude node_modules folder from ${cloudDetection.provider} sync`
+      'Exclude node_modules folder from ' + cloudDetection.provider + ' sync'
     );
     log.bullet(
-      `Close any file explorers or editors that might be locking files`
+      'Close any file explorers or editors that might be locking files'
     );
 
     console.log(
       boxen(
         chalk.yellow.bold("⚠️  Important\n\n") +
-          `Working with npm projects in ${cloudDetection.provider} is not recommended.\n` +
-          `File sync conflicts can cause installation failures and data corruption.\n\n` +
+          'Working with npm projects in ' + cloudDetection.provider + ' is not recommended.\n' +
+          'File sync conflicts can cause installation failures and data corruption.\n\n' +
           chalk.white(
             "Best practice: Keep development projects in a local folder."
           ),
