@@ -1,0 +1,97 @@
+{
+  "name": "expo-upgrade-wizard",
+  "version": "1.0.0",
+  "description": "Professional CLI tool to automate Expo SDK upgrades",
+  "main": "dist/index.js",
+  "bin": {
+    "expo-upgrade-wizard": "./bin/expo-upgrade-wizard.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test-ai": "tsx src/index.ts test-ai",
+    "prepublishOnly": "npm run build",
+    "publish:npm": "node scripts/publish.js",
+    "link:local": "npm link",
+    "unlink:local": "npm unlink",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "expo",
+    "react-native",
+    "upgrade",
+    "cli",
+    "automation",
+    "sdk",
+    "migration",
+    "tool",
+    "developer-tools",
+    "expo-sdk"
+  ],
+  "author": "Expo Upgrade Wizard Team",
+  "license": "CC-BY-NC-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/expo-upgrade-wizard/expo-upgrade-wizard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/issues"
+  },
+  "homepage": "https://github.com/expo-upgrade-wizard/expo-upgrade-wizard#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/babel__generator": "^7.6.8",
+    "@types/babel__traverse": "^7.20.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/gradient-string": "^1.1.6",
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^24.7.0",
+    "@types/semver": "^7.5.8",
+    "@types/update-notifier": "^6.0.8",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@babel/generator": "^7.24.0",
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0",
+    "@babel/types": "^7.24.0",
+    "archiver": "^7.0.1",
+    "axios": "^1.12.2",
+    "boxen": "^7.1.1",
+    "chalk": "^4.1.2",
+    "cli-spinners": "^2.9.2",
+    "cli-table3": "^0.6.5",
+    "commander": "^14.0.1",
+    "conf": "^15.0.2",
+    "dotenv": "^17.2.3",
+    "execa": "^8.0.1",
+    "figures": "^3.2.0",
+    "fs-extra": "^11.3.2",
+    "glob": "^10.3.10",
+    "gradient-string": "^2.0.2",
+    "inquirer": "^8.2.6",
+    "listr2": "^9.0.4",
+    "node-fetch": "^3.3.2",
+    "ora": "^5.4.1",
+    "semver": "^7.7.2",
+    "simple-git": "^3.25.0",
+    "update-notifier": "^6.0.2",
+    "uuid": "^13.0.0",
+    "winston": "^3.13.0"
+  }
+}

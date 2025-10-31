@@ -1,0 +1,37 @@
+# Code Owners
+# These owners will be requested for review when someone opens a pull request.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global owners - will be requested for all PRs
+* @expo-upgrade-wizard/maintainers
+
+# Core source code
+/src/ @expo-upgrade-wizard/core-team
+
+# Data and breaking changes
+/src/data/ @expo-upgrade-wizard/data-maintainers
+
+# Documentation
+*.md @expo-upgrade-wizard/docs-team
+/docs/ @expo-upgrade-wizard/docs-team
+
+# GitHub workflows and automation
+/.github/ @expo-upgrade-wizard/devops-team
+
+# Configuration files
+*.json @expo-upgrade-wizard/core-team
+*.yml @expo-upgrade-wizard/devops-team
+*.yaml @expo-upgrade-wizard/devops-team
+
+# Security-related files
+SECURITY.md @expo-upgrade-wizard/security-team
+/.github/workflows/codeql.yml @expo-upgrade-wizard/security-team
+
+# Package and dependencies
+package.json @expo-upgrade-wizard/core-team
+package-lock.json @expo-upgrade-wizard/core-team
+
+# TypeScript configuration
+tsconfig.json @expo-upgrade-wizard/core-team
+
+# Note: Update team names and members as the project grows

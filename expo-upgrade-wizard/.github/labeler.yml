@@ -1,0 +1,52 @@
+# Labeler configuration
+# Automatically label PRs based on changed files
+
+documentation:
+  - '**/*.md'
+  - 'docs/**/*'
+
+dependencies:
+  - 'package.json'
+  - 'package-lock.json'
+  - 'yarn.lock'
+  - 'pnpm-lock.yaml'
+
+'component: cli':
+  - 'src/index.ts'
+  - 'bin/**/*'
+
+'component: upgrader':
+  - 'src/upgraders/**/*'
+  - 'src/utils/upgrade-helpers.ts'
+
+'component: ai':
+  - 'src/utils/ai-analyzer.ts'
+  - 'src/utils/*-guide-generator.ts'
+
+'component: breaking-changes':
+  - 'src/data/breaking-changes.ts'
+  - 'src/data/sdk*-breaking-changes.ts'
+
+'component: dependencies':
+  - 'src/data/package-compatibility.ts'
+  - 'src/data/sdk-versions.ts'
+
+github-actions:
+  - '.github/workflows/**/*'
+  - '.github/**/*.yml'
+
+'sdk: 50':
+  - '**/*sdk50*'
+  - '**/*SDK50*'
+
+'sdk: 51':
+  - '**/*sdk51*'
+  - '**/*SDK51*'
+
+'sdk: 52':
+  - '**/*sdk52*'
+  - '**/*SDK52*'
+
+'sdk: 53':
+  - '**/*sdk53*'
+  - '**/*SDK53*'

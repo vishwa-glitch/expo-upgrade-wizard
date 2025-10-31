@@ -1,0 +1,159 @@
+# Label configuration for GitHub Issues and PRs
+
+# Type labels
+- name: bug
+  color: 'd73a4a'
+  description: Something isn't working
+
+- name: enhancement
+  color: 'a2eeef'
+  description: New feature or request
+
+- name: documentation
+  color: '0075ca'
+  description: Improvements or additions to documentation
+
+- name: question
+  color: 'd876e3'
+  description: Further information is requested
+
+# Priority labels
+- name: 'priority: critical'
+  color: 'b60205'
+  description: Critical priority - needs immediate attention
+
+- name: 'priority: high'
+  color: 'd93f0b'
+  description: High priority
+
+- name: 'priority: medium'
+  color: 'fbca04'
+  description: Medium priority
+
+- name: 'priority: low'
+  color: '0e8a16'
+  description: Low priority
+
+# Status labels
+- name: 'status: needs-triage'
+  color: 'ededed'
+  description: Needs initial review and categorization
+
+- name: 'status: in-progress'
+  color: '0052cc'
+  description: Work in progress
+
+- name: 'status: blocked'
+  color: 'e99695'
+  description: Blocked by another issue or external factor
+
+- name: 'status: needs-review'
+  color: '5319e7'
+  description: Needs code review
+
+- name: 'status: needs-info'
+  color: 'fef2c0'
+  description: Needs more information from reporter
+
+- name: stale
+  color: 'eeeeee'
+  description: No recent activity
+
+# SDK version labels
+- name: 'sdk: 50'
+  color: 'c5def5'
+  description: Related to Expo SDK 50
+
+- name: 'sdk: 51'
+  color: 'c5def5'
+  description: Related to Expo SDK 51
+
+- name: 'sdk: 52'
+  color: 'c5def5'
+  description: Related to Expo SDK 52
+
+- name: 'sdk: 53'
+  color: 'c5def5'
+  description: Related to Expo SDK 53
+
+- name: sdk-support
+  color: '1d76db'
+  description: Request for new SDK version support
+
+# Component labels
+- name: 'component: cli'
+  color: 'bfdadc'
+  description: CLI interface and commands
+
+- name: 'component: upgrader'
+  color: 'bfdadc'
+  description: Upgrade logic and algorithms
+
+- name: 'component: ai'
+  color: 'bfdadc'
+  description: AI-powered features
+
+- name: 'component: breaking-changes'
+  color: 'bfdadc'
+  description: Breaking changes detection and fixes
+
+- name: 'component: dependencies'
+  color: 'bfdadc'
+  description: Dependency management
+
+# Special labels
+- name: 'good first issue'
+  color: '7057ff'
+  description: Good for newcomers
+
+- name: 'help wanted'
+  color: '008672'
+  description: Extra attention is needed
+
+- name: duplicate
+  color: 'cfd3d7'
+  description: This issue or pull request already exists
+
+- name: invalid
+  color: 'e4e669'
+  description: This doesn't seem right
+
+- name: wontfix
+  color: 'ffffff'
+  description: This will not be worked on
+
+- name: security
+  color: 'ee0701'
+  description: Security-related issue
+
+- name: performance
+  color: 'f9d0c4'
+  description: Performance improvement
+
+- name: breaking-change
+  color: 'd93f0b'
+  description: Introduces breaking changes
+
+- name: automated
+  color: 'ededed'
+  description: Automated PR (Dependabot, etc.)
+
+- name: dependencies
+  color: '0366d6'
+  description: Pull requests that update a dependency file
+
+- name: github-actions
+  color: '000000'
+  description: Pull requests that update GitHub Actions
+
+- name: pinned
+  color: 'fef2c0'
+  description: Should not be marked as stale
+
+- name: roadmap
+  color: 'fbca04'
+  description: Part of the project roadmap
+
+- name: commercial-license
+  color: 'gold'
+  description: Commercial licensing inquiry

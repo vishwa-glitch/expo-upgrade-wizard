@@ -1,0 +1,82 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+coverage/
+
+# Cache directories
+.expo-upgrade-wizard/
+.expo-upgrade-wizard-logs/
+*.cache
+.eslintcache
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# Log files
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+.temp/
+
+# Test files
+.nyc_output/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store/
+
+# Backup files
+*.backup
+*.bak
+
+# Test and demo files (local development only)
+test-*.js
+test-*.mjs
+demo-*.js
+demo-*.mjs
+capture-cli-output.*
+cli-output-demo.txt
+
+# Internal documentation (not for public repo)
+WHAT_WAS_DONE.md
+DOCS_FOR_LANDING_PAGE.md
+PROJECT_SUMMARY.md
+SETUP_SUMMARY.md
+ENTERPRISE_SETUP_COMPLETE.md
+README_ENTERPRISE.md
+LAUNCH_CHECKLIST.md

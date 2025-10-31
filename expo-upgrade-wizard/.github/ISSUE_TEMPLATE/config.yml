@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/discussions
+    about: Ask questions and discuss ideas with the community
+  
+  - name: 📚 Documentation
+    url: https://github.com/expo-upgrade-wizard/expo-upgrade-wizard#readme
+    about: Read the documentation and guides
+  
+  - name: 🔒 Security Issue
+    url: https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/security/policy
+    about: Report security vulnerabilities privately
+  
+  - name: 💼 Commercial Support
+    url: mailto:business@expo-upgrade-wizard.dev
+    about: Inquire about enterprise support and consulting

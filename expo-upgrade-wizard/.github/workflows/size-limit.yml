@@ -1,0 +1,40 @@
+name: Size Limit
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  size:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+      
+      - name: Check bundle size
+        run: |
+          echo "Checking dist folder size..."
+          du -sh dist/
+          
+          # Get size in KB
+          SIZE=$(du -sk dist/ | cut -f1)
+          echo "Bundle size: ${SIZE}KB"
+          
+          # Fail if larger than 10MB (10240KB)
+          if [ $SIZE -gt 10240 ]; then
+            echo "❌ Bundle size exceeds 10MB limit!"
+            exit 1
+          else
+            echo "✅ Bundle size is within limits"
+          fi

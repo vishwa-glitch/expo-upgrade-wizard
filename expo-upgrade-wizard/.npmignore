@@ -1,0 +1,66 @@
+# Source files
+src/
+tsconfig.json
+.eslintrc.json
+.prettierrc.json
+.prettierignore
+
+# Tests
+test-*.js
+*.test.ts
+*.spec.ts
+__tests__/
+coverage/
+
+# Development files
+.env
+.env.example
+.env.*
+nodemon.json
+
+# Documentation
+docs/
+*.md
+!README.md
+!LICENSE
+!CHANGELOG.md
+
+# Demo files
+demo-*.js
+demo-*.mjs
+capture-cli-output.*
+cli-output-demo.txt
+
+# Build artifacts
+*.tsbuildinfo
+.expo-upgrade-wizard/
+.expo-upgrade-wizard-logs/
+
+# Git
+.git/
+.gitignore
+.github/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.travis.yml
+.circleci/
+azure-pipelines.yml
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.pnpm-store/
+
+# Scripts
+scripts/
