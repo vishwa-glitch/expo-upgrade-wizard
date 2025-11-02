@@ -855,34 +855,11 @@ Direct support via email
 
 <div align="center">
 
-## 🎉 Join Our Community
+## 🌟 Star History
 
-<table>
-<tr>
-<td align="center" width="33%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Hand%20gestures/Waving%20Hand.png" width="80" alt="Wave" />
-<br/>
-<h3>👋 Welcome</h3>
-Join developers using Expo Upgrade Wizard
-</td>
-<td align="center" width="33%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Star.png" width="80" alt="Star" />
-<br/>
-<h3>⭐ Star Us</h3>
-Show your support on GitHub
-</td>
-<td align="center" width="33%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Megaphone.png" width="80" alt="Share" />
-<br/>
-<h3>📢 Share</h3>
-Help others discover this tool
-</td>
-</tr>
-</table>
+If this project helps you, please consider giving it a star! ⭐
 
-<br/>
-
-[![GitHub Repo](https://img.shields.io/badge/⭐_Star_on_GitHub-181717?style=for-the-badge&logo=github)](https://github.com/vishwa-glitch/expo-upgrade-wizard)
+[![Star History Chart](https://api.star-history.com/svg?repos=vishwa-glitch/expo-upgrade-wizard&type=Date)](https://star-history.com/#vishwa-glitch/expo-upgrade-wizard&Date)
 
 </div>
 
@@ -896,46 +873,32 @@ We take security seriously. If you discover a vulnerability, please follow our [
 
 ---
 
-## 📊 Project Highlights
+## 📊 Project Stats
 
 <table>
 <tr>
-<td align="center" width="25%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Rocket.png" width="60" alt="Fast" />
+<td align="center">
+<img src="https://img.shields.io/github/stars/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=yellow" alt="Stars" />
 <br/>
-<h3>⚡ 70% Faster</h3>
-Reduce upgrade time significantly
+<b>Stars</b>
 </td>
-<td align="center" width="25%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Package.png" width="60" alt="SDK" />
+<td align="center">
+<img src="https://img.shields.io/github/forks/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=blue" alt="Forks" />
 <br/>
-<h3>📦 SDK 53+</h3>
-Supports latest Expo versions
+<b>Forks</b>
 </td>
-<td align="center" width="25%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Check%20Mark.png" width="60" alt="Tested" />
+<td align="center">
+<img src="https://img.shields.io/github/last-commit/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=green" alt="Last Commit" />
 <br/>
-<h3>✅ Battle-Tested</h3>
-Used in production apps
+<b>Last Commit</b>
 </td>
-<td align="center" width="25%">
-<img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Smilies/Smiling%20Face%20with%20Sunglasses.png" width="60" alt="Easy" />
+<td align="center">
+<img src="https://img.shields.io/github/repo-size/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=orange" alt="Repo Size" />
 <br/>
-<h3>🎯 Easy to Use</h3>
-One command to upgrade
+<b>Repo Size</b>
 </td>
 </tr>
 </table>
-
-<br/>
-
-<div align="center">
-
-### 🌟 Show Your Support
-
-If this project helps you, give it a ⭐ on [GitHub](https://github.com/vishwa-glitch/expo-upgrade-wizard)!
-
-</div>
 
 </div>
 
