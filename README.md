@@ -2,8 +2,8 @@
 
 [![npm version](https://badge.fury.io/js/expo-upgrade-wizard.svg)](https://www.npmjs.com/package/expo-upgrade-wizard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/workflows/CI/badge.svg)](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/actions)
-[![CodeQL](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/workflows/CodeQL/badge.svg)](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/security/code-scanning)
+[![CI](https://github.com/vishwa-glitch/expo-upgrade-wizard/workflows/CI/badge.svg)](https://github.com/vishwa-glitch/expo-upgrade-wizard/actions)
+[![CodeQL](https://github.com/vishwa-glitch/expo-upgrade-wizard/workflows/CodeQL/badge.svg)](https://github.com/vishwa-glitch/expo-upgrade-wizard/security/code-scanning)
 [![Node.js Version](https://img.shields.io/node/v/expo-upgrade-wizard.svg)](https://nodejs.org)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -248,7 +248,7 @@ We welcome contributions from developers of all skill levels! This project follo
 
 ```bash
 # Clone the repository
-git clone https://github.com/expo-upgrade-wizard/expo-upgrade-wizard.git
+git clone https://github.com/vishwa-glitch/expo-upgrade-wizard.git
 cd expo-upgrade-wizard
 
 # Install dependencies
@@ -269,11 +269,11 @@ npm run format
 
 ### Ways to Contribute
 
-- 🐛 [Report bugs](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/issues/new?template=bug_report.md)
-- 💡 [Suggest features](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/issues/new?template=feature_request.md)
+- 🐛 [Report bugs](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues/new?template=bug_report.md)
+- 💡 [Suggest features](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues/new?template=feature_request.md)
 - 📝 Improve documentation
 - 🔧 Submit pull requests
-- 💬 Help others in [Discussions](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/discussions)
+- 💬 Help others in [Discussions](https://github.com/vishwa-glitch/expo-upgrade-wizard/discussions)
 - ⭐ Star the project
 
 See our [Contributing Guide](CONTRIBUTING.md) for detailed information.
@@ -302,7 +302,7 @@ This project is licensed under the MIT License. You are free to:
 Acceptable attribution examples:
 - "Built with Expo Upgrade Wizard"
 - "Powered by Expo Upgrade Wizard"
-- Link to: https://github.com/expo-upgrade-wizard/expo-upgrade-wizard
+- Link to: https://github.com/vishwa-glitch/expo-upgrade-wizard
 
 See [LICENSE](LICENSE) for full details.
 
@@ -317,9 +317,9 @@ See [LICENSE](LICENSE) for full details.
 
 ### Get Help
 
-- 📖 [Documentation](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard#readme)
-- 💬 [GitHub Discussions](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/discussions)
-- 🐛 [Report Issues](https://github.com/expo-upgrade-wizard/expo-upgrade-wizard/issues)
+- 📖 [Documentation](https://github.com/vishwa-glitch/expo-upgrade-wizard#readme)
+- 💬 [GitHub Discussions](https://github.com/vishwa-glitch/expo-upgrade-wizard/discussions)
+- 🐛 [Report Issues](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues)
 - 📧 [Email Support](mailto:expo.upgrade.book@gmail.com)
 
 ### Support
@@ -330,7 +330,7 @@ Need help? Email: [expo.upgrade.book@gmail.com](mailto:expo.upgrade.book@gmail.c
 
 If this project helps you, please consider giving it a star! ⭐
 
-[![Star History Chart](https://api.star-history.com/svg?repos=expo-upgrade-wizard/expo-upgrade-wizard&type=Date)](https://star-history.com/#expo-upgrade-wizard/expo-upgrade-wizard&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=vishwa-glitch/expo-upgrade-wizard&type=Date)](https://star-history.com/#vishwa-glitch/expo-upgrade-wizard&Date)
 
 ## 🔒 Security
 
@@ -338,12 +338,12 @@ We take security seriously. If you discover a security vulnerability, please fol
 
 ## 📊 Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/expo-upgrade-wizard/expo-upgrade-wizard?style=social)
-![GitHub forks](https://img.shields.io/github/forks/expo-upgrade-wizard/expo-upgrade-wizard?style=social)
-![GitHub watchers](https://img.shields.io/github/watchers/expo-upgrade-wizard/expo-upgrade-wizard?style=social)
-![GitHub contributors](https://img.shields.io/github/contributors/expo-upgrade-wizard/expo-upgrade-wizard)
-![GitHub issues](https://img.shields.io/github/issues/expo-upgrade-wizard/expo-upgrade-wizard)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/expo-upgrade-wizard/expo-upgrade-wizard)
+![GitHub stars](https://img.shields.io/github/stars/vishwa-glitch/expo-upgrade-wizard?style=social)
+![GitHub forks](https://img.shields.io/github/forks/vishwa-glitch/expo-upgrade-wizard?style=social)
+![GitHub watchers](https://img.shields.io/github/watchers/vishwa-glitch/expo-upgrade-wizard?style=social)
+![GitHub contributors](https://img.shields.io/github/contributors/vishwa-glitch/expo-upgrade-wizard)
+![GitHub issues](https://img.shields.io/github/issues/vishwa-glitch/expo-upgrade-wizard)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/vishwa-glitch/expo-upgrade-wizard)
 
 ---
 
