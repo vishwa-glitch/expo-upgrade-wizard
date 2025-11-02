@@ -585,9 +585,9 @@ npm install
 
 We welcome contributions from developers of all skill levels!
 
-[![Contributors](https://img.shields.io/github/contributors/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)](https://github.com/vishwa-glitch/expo-upgrade-wizard/graphs/contributors)
-[![Pull Requests](https://img.shields.io/github/issues-pr/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)](https://github.com/vishwa-glitch/expo-upgrade-wizard/pulls)
-[![Issues](https://img.shields.io/github/issues/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-blue?style=for-the-badge&logo=github)](https://github.com/vishwa-glitch/expo-upgrade-wizard)
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen?style=for-the-badge)](CONTRIBUTING.md)
+[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge)](LICENSE)
 
 </div>
 
@@ -624,11 +624,11 @@ npm run format
 
 ### 🎯 Ways to Contribute
 
-- 🐛 [**Report bugs**](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues/new?template=bug_report.md)
-- 💡 [**Suggest features**](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues/new?template=feature_request.md)
+- 🐛 [**Report bugs**](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues)
+- 💡 [**Suggest features**](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues)
 - 📝 **Improve documentation**
 - 🔧 **Submit pull requests**
-- 💬 [**Help others**](https://github.com/vishwa-glitch/expo-upgrade-wizard/discussions)
+- 💬 **Help others in discussions**
 - ⭐ **Star the project**
 
 </td>
@@ -827,7 +827,7 @@ Complete guides & tutorials
 <img src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Objects/Speech%20Balloon.png" width="60" alt="Discussions" />
 
 ### 💬 Discuss
-[**Join Discussions**](https://github.com/vishwa-glitch/expo-upgrade-wizard/discussions)
+[**Start a Discussion**](https://github.com/vishwa-glitch/expo-upgrade-wizard/issues)
 
 Ask questions & share ideas
 
@@ -875,13 +875,30 @@ We take security seriously. If you discover a vulnerability, please follow our [
 
 ## 📊 Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github)
-![GitHub forks](https://img.shields.io/github/forks/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github)
-![GitHub watchers](https://img.shields.io/github/watchers/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github)
-
-![GitHub contributors](https://img.shields.io/github/contributors/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)
-![GitHub issues](https://img.shields.io/github/issues/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge)
+<table>
+<tr>
+<td align="center">
+<img src="https://img.shields.io/github/stars/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=yellow" alt="Stars" />
+<br/>
+<b>Stars</b>
+</td>
+<td align="center">
+<img src="https://img.shields.io/github/forks/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=blue" alt="Forks" />
+<br/>
+<b>Forks</b>
+</td>
+<td align="center">
+<img src="https://img.shields.io/github/last-commit/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=green" alt="Last Commit" />
+<br/>
+<b>Last Commit</b>
+</td>
+<td align="center">
+<img src="https://img.shields.io/github/repo-size/vishwa-glitch/expo-upgrade-wizard?style=for-the-badge&logo=github&color=orange" alt="Repo Size" />
+<br/>
+<b>Repo Size</b>
+</td>
+</tr>
+</table>
 
 </div>
 
@@ -895,8 +912,8 @@ We take security seriously. If you discover a vulnerability, please follow our [
 
 <br/>
 
-[![GitHub followers](https://img.shields.io/github/followers/vishwa-glitch?style=social)](https://github.com/vishwa-glitch)
-[![Twitter Follow](https://img.shields.io/twitter/follow/expo?style=social)](https://twitter.com/expo)
+[![GitHub](https://img.shields.io/badge/Follow-@vishwa--glitch-181717?style=for-the-badge&logo=github)](https://github.com/vishwa-glitch)
+[![Expo](https://img.shields.io/badge/Built%20for-Expo-000020?style=for-the-badge&logo=expo)](https://expo.dev)
 
 <br/>
 
