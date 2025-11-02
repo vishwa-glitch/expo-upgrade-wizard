@@ -185,7 +185,7 @@ export class CodeFixer {
       const pluginsContent = pluginsMatch[1];
       
       // Split by commas (simple approach - works for most cases)
-      let pluginLines = pluginsContent
+      const pluginLines = pluginsContent
         .split(',')
         .map(line => line.trim())
         .filter(line => line.length > 0);

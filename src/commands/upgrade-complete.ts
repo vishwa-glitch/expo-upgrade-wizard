@@ -1468,7 +1468,7 @@ async function verifyInstallation(
 function formatDoctorOutput(output: string): string {
   const lines = output.split("\n");
   let formatted = "";
-  let warnings: Array<{ title: string; details: string[]; advice: string }> =
+  const warnings: Array<{ title: string; details: string[]; advice: string }> =
     [];
   let currentWarning: {
     title: string;

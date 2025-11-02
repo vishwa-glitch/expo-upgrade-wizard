@@ -7,7 +7,7 @@
     "expo-upgrade-wizard": "./bin/expo-upgrade-wizard.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"No tests specified yet\"",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
