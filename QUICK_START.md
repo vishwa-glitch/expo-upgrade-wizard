@@ -20,13 +20,7 @@ npx expo-upgrade-wizard
 
 ### 1. Simple Upgrade
 
-Upgrade to the latest SDK:
-
-```bash
-expo-upgrade-wizard upgrade
-```
-
-Upgrade to a specific SDK:
+Upgrade to SDK 53:
 
 ```bash
 expo-upgrade-wizard upgrade --target-sdk 53
@@ -37,7 +31,7 @@ expo-upgrade-wizard upgrade --target-sdk 53
 Before upgrading, check what will change:
 
 ```bash
-expo-upgrade-wizard check --target 53
+expo-upgrade-wizard check
 ```
 
 ### 3. Preview Changes (Dry Run)
@@ -50,11 +44,11 @@ expo-upgrade-wizard upgrade --target-sdk 53 --dry-run
 
 ## Common Workflows
 
-### Workflow 1: Safe Upgrade
+### Workflow 1: Safe Upgrade (Recommended)
 
 ```bash
 # 1. Check compatibility
-expo-upgrade-wizard check --target 53
+expo-upgrade-wizard check
 
 # 2. Preview changes
 expo-upgrade-wizard upgrade --target-sdk 53 --dry-run
@@ -62,7 +56,10 @@ expo-upgrade-wizard upgrade --target-sdk 53 --dry-run
 # 3. Perform upgrade
 expo-upgrade-wizard upgrade --target-sdk 53
 
-# 4. Verify with expo-doctor
+# 4. Fix any Hermes errors
+expo-upgrade-wizard fix-hermes
+
+# 5. Verify with expo-doctor
 npx expo-doctor
 ```
 
@@ -71,16 +68,42 @@ npx expo-doctor
 ```bash
 # One command upgrade (creates backup automatically)
 expo-upgrade-wizard upgrade --target-sdk 53
+
+# If you encounter errors, run:
+expo-upgrade-wizard fix-hermes
 ```
 
-### Workflow 3: Upgrade with AI Analysis
+### Workflow 3: SDK 53 Specific Upgrade
 
 ```bash
-# Set up AI (one-time)
-echo "OPENROUTER_API_KEY=your-key-here" > .env
-
-# Upgrade with AI-powered guidance
+# 1. Upgrade to SDK 53
 expo-upgrade-wizard upgrade --target-sdk 53
+
+# 2. Fix SDK 53 specific issues
+expo-upgrade-wizard fix-sdk53
+
+# 3. Fix Hermes errors
+expo-upgrade-wizard fix-hermes
+
+# 4. Verify
+npx expo-doctor
+```
+
+### Workflow 4: Troubleshooting Upgrade
+
+```bash
+# If upgrade fails or has issues:
+
+# 1. Rollback to backup
+expo-upgrade-wizard state rollback
+
+# 2. Try again with conservative strategy
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy conservative
+
+# 3. Fix specific issues
+expo-upgrade-wizard fix-deprecated
+expo-upgrade-wizard fix-sdk53
+expo-upgrade-wizard fix-hermes
 ```
 
 ## Common Commands
@@ -88,23 +111,49 @@ expo-upgrade-wizard upgrade --target-sdk 53
 ### Upgrade Commands
 
 ```bash
-# Interactive upgrade
-expo-upgrade-wizard
-
-# Upgrade to specific SDK
+# Upgrade to SDK 53
 expo-upgrade-wizard upgrade --target-sdk 53
 
 # Conservative upgrade (minimal changes)
-expo-upgrade-wizard upgrade --strategy conservative
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy conservative
 
 # Aggressive upgrade (all updates)
-expo-upgrade-wizard upgrade --strategy aggressive
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy aggressive
 
 # Skip backup (not recommended)
-expo-upgrade-wizard upgrade --skip-backup
+expo-upgrade-wizard upgrade --target-sdk 53 --skip-backup
 
 # Skip installation
-expo-upgrade-wizard upgrade --skip-install
+expo-upgrade-wizard upgrade --target-sdk 53 --skip-install
+```
+
+### Fix Commands
+
+```bash
+# Fix SDK 53 specific issues (interactive)
+expo-upgrade-wizard fix-sdk53
+
+# Fix deprecated packages (interactive)
+expo-upgrade-wizard fix-deprecated
+
+# Detect and fix Hermes errors
+expo-upgrade-wizard fix-hermes
+
+# Check React 19 compatibility
+expo-upgrade-wizard check-react19
+
+# Validate React installation
+expo-upgrade-wizard validate-react
+```
+
+### Preview Commands
+
+```bash
+# Preview any fix without applying
+expo-upgrade-wizard fix-sdk53 --dry-run
+expo-upgrade-wizard fix-deprecated --dry-run
+expo-upgrade-wizard fix-hermes --dry-run
+expo-upgrade-wizard check-react19 --fix --dry-run
 ```
 
 ### Check Commands
@@ -133,13 +182,6 @@ expo-upgrade-wizard fix-deprecated
 expo-upgrade-wizard fix-deprecated --dry-run
 ```
 
-### Guide Commands
-
-```bash
-# View SDK 50 breaking changes guide
-expo-upgrade-wizard guide-sdk50
-```
-
 ### Rollback Commands
 
 ```bash
@@ -157,7 +199,7 @@ Choose the right installation strategy for your project:
 ### Expo Strategy (Default, Recommended)
 
 ```bash
-expo-upgrade-wizard upgrade --install-strategy expo
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy expo
 ```
 
 Best for most projects. Uses Expo-first approach to avoid Metro issues.
@@ -165,7 +207,7 @@ Best for most projects. Uses Expo-first approach to avoid Metro issues.
 ### NPM Strategy
 
 ```bash
-expo-upgrade-wizard upgrade --install-strategy npm
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy npm
 ```
 
 Standard npm install. Use if you know your dependencies are compatible.
@@ -173,7 +215,7 @@ Standard npm install. Use if you know your dependencies are compatible.
 ### Legacy Strategy
 
 ```bash
-expo-upgrade-wizard upgrade --install-strategy legacy
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy legacy
 ```
 
 Uses `--legacy-peer-deps`. May cause Metro version mismatches.
@@ -181,7 +223,7 @@ Uses `--legacy-peer-deps`. May cause Metro version mismatches.
 ### Force Strategy
 
 ```bash
-expo-upgrade-wizard upgrade --install-strategy force
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy force
 ```
 
 Uses `--force` flag. Last resort for stubborn dependency conflicts.
@@ -193,7 +235,7 @@ Uses `--force` flag. Last resort for stubborn dependency conflicts.
 Minimal changes, safest option:
 
 ```bash
-expo-upgrade-wizard upgrade --strategy conservative
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy conservative
 ```
 
 ### Recommended (Default)
@@ -201,7 +243,7 @@ expo-upgrade-wizard upgrade --strategy conservative
 Balanced approach:
 
 ```bash
-expo-upgrade-wizard upgrade --strategy recommended
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy recommended
 ```
 
 ### Aggressive
@@ -209,7 +251,7 @@ expo-upgrade-wizard upgrade --strategy recommended
 All updates, best for new projects:
 
 ```bash
-expo-upgrade-wizard upgrade --strategy aggressive
+expo-upgrade-wizard upgrade --target-sdk 53 --strategy aggressive
 ```
 
 ## AI Features Setup
@@ -248,17 +290,17 @@ git add .
 git commit -m "Pre-upgrade commit"
 
 # Solution 2: Force upgrade (not recommended)
-expo-upgrade-wizard upgrade --force
+expo-upgrade-wizard upgrade --target-sdk 53 --force
 ```
 
 ### Issue: Installation Fails
 
 ```bash
 # Try different installation strategy
-expo-upgrade-wizard upgrade --install-strategy legacy
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy legacy
 
 # Or force strategy
-expo-upgrade-wizard upgrade --install-strategy force
+expo-upgrade-wizard upgrade --target-sdk 53 --install-strategy force
 ```
 
 ### Issue: Build Fails After Upgrade
@@ -363,8 +405,8 @@ cd my-expo-app
 # Check current status
 expo-upgrade-wizard check
 
-# Upgrade to latest
-expo-upgrade-wizard upgrade
+# Upgrade to SDK 53
+expo-upgrade-wizard upgrade --target-sdk 53
 
 # Verify
 npx expo-doctor
@@ -373,14 +415,14 @@ npx expo-doctor
 ### Example 2: Experienced User
 
 ```bash
-# Quick upgrade with AI
+# Quick upgrade
 npx expo-upgrade-wizard upgrade --target-sdk 53
 
 # If issues, rollback
 npx expo-upgrade-wizard state rollback
 
 # Try different strategy
-npx expo-upgrade-wizard upgrade --strategy conservative
+npx expo-upgrade-wizard upgrade --target-sdk 53 --strategy conservative
 ```
 
 ### Example 3: CI/CD Integration

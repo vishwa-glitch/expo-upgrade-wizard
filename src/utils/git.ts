@@ -54,7 +54,7 @@ export class GitManager {
   /**
    * Ensure wizard directory and logs are in .gitignore
    */
-  private async ensureWizardLogsIgnored(): Promise<void> {
+  public async ensureWizardLogsIgnored(): Promise<void> {
     const gitignorePath = path.join(this.projectPath, '.gitignore');
     const patternsToIgnore = [
       '.expo-upgrade-wizard/',      // Main wizard directory (contains state backups!)

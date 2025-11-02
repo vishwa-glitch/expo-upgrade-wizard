@@ -62,6 +62,7 @@ export interface StatusBarConfig {
 export interface FixResult {
   fixed: AppJson;
   changes: Change[];
+  packagesToInstall?: string[];
 }
 
 export interface Change {
@@ -79,6 +80,7 @@ export interface Change {
  */
 export function autoFixAppJson(appJson: AppJson, targetSdk: number): FixResult {
   const changes: Change[] = [];
+  const packagesToInstall: string[] = [];
 
   // Deep clone to avoid mutating original
   const fixed = JSON.parse(JSON.stringify(appJson)) as AppJson;
@@ -90,12 +92,12 @@ export function autoFixAppJson(appJson: AppJson, targetSdk: number): FixResult {
   migrateStatusBar(fixed, changes);
   removeFacebookScheme(fixed, changes);
   configurePlugins(fixed, changes);
-  fixIosDeploymentTarget(fixed, targetSdk, changes);
+  fixIosDeploymentTarget(fixed, targetSdk, changes, packagesToInstall);
   addDefaultPermissionMessages(fixed, changes);
   validatePlatformConfigs(fixed, changes);
   validateEASConfig(fixed, changes);
 
-  return { fixed, changes };
+  return { fixed, changes, packagesToInstall };
 }
 
 /**
@@ -206,7 +208,8 @@ function removeFacebookScheme(appJson: AppJson, changes: Change[]): void {
 function fixIosDeploymentTarget(
   appJson: AppJson,
   targetSdk: number,
-  changes: Change[]
+  changes: Change[],
+  packagesToInstall: string[]
 ): void {
   // Only apply for SDK 53+
   if (targetSdk < 53) {
@@ -271,6 +274,8 @@ function fixIosDeploymentTarget(
         message: `Added expo-build-properties plugin with ios.deploymentTarget: ${minRequired} (required for SDK 53)`,
         field: "expo.plugins.expo-build-properties",
       });
+      // Track that we need to install this package
+      packagesToInstall.push("expo-build-properties");
     }
   }
 }

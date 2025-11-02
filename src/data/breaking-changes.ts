@@ -243,29 +243,7 @@ export const BREAKING_CHANGES: BreakingChange[] = [
     ]
   },
 
-  // React 19 compatibility (SDK 53)
-  {
-    id: 'sdk-53-react-19',
-    package: 'react',
-    affectedVersions: {
-      from: '19.x',  // If React 19 is installed
-      to: '18.3.x'   // Must use React 18.3.1
-    },
-    affectedSDKs: {
-      from: '53',
-      to: '53'
-    },
-    description: 'React 19 causes bundling errors, must downgrade to 18.3.1',
-    severity: 'critical',
-    guideSection: 'react-19-compatibility',
-    estimatedFixTime: '10-15 min',
-    manualSteps: [
-      'Downgrade React to 18.3.1: npm install react@18.3.1 react-dom@18.3.1',
-      'Clear Metro cache: npx expo start --clear',
-      'Verify bundling works without errors',
-      'Test app functionality'
-    ]
-  },
+
 
   // ============================================
   // CRITICAL: AsyncStorage (NEW)

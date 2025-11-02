@@ -253,6 +253,7 @@ enableBundleCompression = (findProperty('android.enableBundleCompression') ?: fa
         "Open app.json",
         "Find or add 'expo-build-properties' plugin",
         'Set ios.deploymentTarget to "15.1"',
+        "Install the package: npm install expo-build-properties --legacy-peer-deps",
       ],
       codeExample: {
         language: "json",

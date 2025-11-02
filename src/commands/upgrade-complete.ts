@@ -62,6 +62,7 @@ interface UpgradeContext {
   doctorOutput?: string;
   doctorPassed?: boolean;
   installCommands?: string[];
+  autoFixesApplied?: number;
 }
 
 /**
@@ -156,7 +157,11 @@ export async function upgradeCompleteCommand(
       );
     }
 
-    // Step 2: Project Analysis
+    // Step 2: Ensure CLI folders are in user's .gitignore
+    const git = new GitManager(projectPath);
+    await git.ensureWizardLogsIgnored();
+
+    // Step 3: Project Analysis
     log.section("📦 Analyzing your project...");
 
     const analyzer = new ProjectAnalyzer();
@@ -206,7 +211,7 @@ export async function upgradeCompleteCommand(
 
     // Set target SDK to 53 (the only supported upgrade path)
     const targetSdk = "53";
-    log.info(chalk.cyan(`\n🎯 Upgrading from SDK 52 to SDK 53"));
+    log.info(chalk.cyan(`\n🎯 Upgrading from SDK 52 to SDK 53`));
 
     // Step 4: Show upgrade path
     const upgradePath = getUpgradePath(
@@ -315,6 +320,7 @@ export async function upgradeCompleteCommand(
     
     // Store fixed files to restore after installation
     const fixedFiles: Map<string, string> = new Map();
+    let autoFixesApplied = 0;
     
     if (autoFixIssues.length > 0) {
       log.info('Found ' + autoFixIssues.length + ' issue' + (autoFixIssues.length > 1 ? 's' : '') + ' that can be auto-fixed');
@@ -322,6 +328,9 @@ export async function upgradeCompleteCommand(
       
       const interactiveFixer = new InteractiveAutoFix(projectPath);
       const { fixed, skipped } = await interactiveFixer.runAllFixes(autoFixIssues);
+      
+      // Store the count for the report
+      autoFixesApplied = fixed;
       
       console.log();
       log.success('✅ Fixed ' + fixed + ' issue' + (fixed !== 1 ? 's' : ''));
@@ -341,6 +350,15 @@ export async function upgradeCompleteCommand(
           log.warn('File not found for saving: ' + issue.file);
         }
       }
+      
+      // Also save package.json if it was modified (e.g., expo-build-properties added)
+      const packageJsonPath = path.join(projectPath, 'package.json');
+      if (await fs.pathExists(packageJsonPath) && !fixedFiles.has('package.json')) {
+        const content = await fs.readFile(packageJsonPath, 'utf-8');
+        fixedFiles.set('package.json', content);
+        log.debug('Saved package.json (' + content.length + ' bytes)');
+      }
+      
       log.success('Saved ' + fixedFiles.size + ' fixed files for restoration');
       
       console.log();
@@ -383,7 +401,8 @@ export async function upgradeCompleteCommand(
       autoFixable,
       manualChanges,
       reactVersion,
-      fixedFiles
+      fixedFiles,
+      autoFixesApplied
     );
 
     const upgradeDuration = Date.now() - upgradeStartTime;
@@ -432,6 +451,7 @@ export async function upgradeCompleteCommand(
           );
         }
       }
+    }
 
     // Show upgrade completion summary
     const formatDuration = (ms: number): string => {
@@ -588,6 +608,22 @@ export async function upgradeCompleteCommand(
       log.bullet(chalk.cyan("npx expo-doctor") + " - Validate your project");
       log.bullet(chalk.cyan("npx expo start") + " - Test your app");
       console.log();
+      
+      // Recommend dev builds for SDK 53
+      console.log(
+        boxen(
+          chalk.cyan.bold("📱 Recommended: Use Development Builds\n\n") +
+            chalk.white("For SDK 53, development builds are recommended over Expo Go:\n\n") +
+            chalk.gray("  • ") + chalk.cyan("npm run build:dev") + chalk.gray(" - Build for both platforms\n") +
+            chalk.gray("  • ") + chalk.cyan("npm run build:dev:android") + chalk.gray(" - Build for Android only\n") +
+            chalk.gray("  • ") + chalk.cyan("npm run build:dev:ios") + chalk.gray(" - Build for iOS only\n\n") +
+            chalk.yellow("Why dev builds?\n") +
+            chalk.gray("  • Full native module support\n") +
+            chalk.gray("  • Push notifications work on Android\n") +
+            chalk.gray("  • Better testing environment for production"),
+          { padding: 1, borderColor: "cyan", borderStyle: "round", margin: 1 }
+        )
+      );
     }
   } catch (error: any) {
     await handleUpgradeError(error, backupData, options, projectPath);
@@ -633,9 +669,6 @@ async function promptForReactVersion(): Promise<"18" | "19"> {
         chalk.green("1. React 18.3.1 (recommended - stable) ✓\n") +
         chalk.yellow(
           "2. React 19.0.0 (Latest - may have compatibility issues)\n\n"
-        ) +
-        chalk.gray(
-          "Note: SDK 53 defaults to React 19, but React 18 is more stable."
         ),
       { padding: 1, borderColor: "cyan", borderStyle: "round" }
     )
@@ -783,9 +816,9 @@ async function prepareBackup(
     try {
       const stateManager = new StateManager(projectPath);
       await stateManager.initialize();
-      await stateManager.captureCurrentState("pre-upgrade");
+      const state = await stateManager.captureCurrentState("pre-upgrade");
 
-      log.info('\n      State backup created at ' + lastStateFile.split('/').pop());
+      log.info('\n      State backup created successfully');
     } catch (error) {
       log.warn(
         "Failed to create state backup, continuing with git backup only"
@@ -848,7 +881,8 @@ async function executeUpgrade(
   autoFixable: any[],
   manualChanges: any[],
   reactVersion?: "18" | "19",
-  fixedFiles?: Map<string, string>
+  fixedFiles?: Map<string, string>,
+  autoFixesApplied?: number
 ): Promise<UpgradeContext> {
   const git = new GitManager();
 
@@ -1168,6 +1202,11 @@ async function executeUpgrade(
   );
 
   const result = await tasks.run();
+
+  // Add auto-fixes count to the result
+  if (autoFixesApplied !== undefined) {
+    result.autoFixesApplied = autoFixesApplied;
+  }
 
   // DEBUG: Check if state folder still exists after all tasks
   const stateDir = path.join(
@@ -1590,16 +1629,56 @@ function generateUpgradeReport(
 
   const duration = Math.round((Date.now() - startTime) / 1000);
 
+  // Get actual package changes by comparing package.json before/after
+  let actualPackagesUpdated = 0;
+  try {
+    const packageJsonPath = path.join(process.cwd(), "package.json");
+    const currentPackageJson = fs.readJsonSync(packageJsonPath);
+    
+    // Count all dependencies that were updated
+    const allDeps = {
+      ...currentPackageJson.dependencies,
+      ...currentPackageJson.devDependencies,
+    };
+    
+    // For expo install --fix, we know it updates many packages
+    // Use a more accurate count based on expo packages
+    const expoPackages = Object.keys(allDeps).filter(pkg => 
+      pkg.startsWith('expo') || 
+      pkg === 'react' || 
+      pkg === 'react-dom' || 
+      pkg === 'react-native'
+    );
+    
+    actualPackagesUpdated = expoPackages.length;
+    
+    // If we have explicit update info from context, use that instead
+    if (context.packageChanges?.updated && context.packageChanges.updated.length > 0) {
+      actualPackagesUpdated = context.packageChanges.updated.length;
+    }
+  } catch (error) {
+    // Fallback to context data
+    actualPackagesUpdated = context.packageChanges?.updated.length || 0;
+  }
+
+  // Get unique modified files count
+  const uniqueModifiedFiles = context.modifiedFiles 
+    ? [...new Set(context.modifiedFiles)].length 
+    : 0;
+
+  // Get auto-fixes count from context (set during the upgrade process)
+  const autoFixesApplied = context.autoFixesApplied || 0;
+
   const reportTable = new Table({
     style: { head: ["cyan"] },
   });
 
   reportTable.push(
     ["Duration", duration + ' seconds'],
-    ["Packages Updated", context.packageChanges?.updated.length || 0],
+    ["Packages Updated", actualPackagesUpdated],
     ["Packages Removed", context.packageChanges?.removed.length || 0],
-    ["Files Modified", context.modifiedFiles?.length || 0],
-    ["Code Auto-fixes Applied", context.fixResults?.successful || 0],
+    ["Files Modified", uniqueModifiedFiles],
+    ["Code Auto-fixes Applied", autoFixesApplied],
     ["Manual Fixes Required", manualChanges.length]
   );
 

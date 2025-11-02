@@ -26,6 +26,11 @@ export interface CheckOptions {
 
 export async function checkCommand(options: CheckOptions): Promise<void> {
   try {
+    // Ensure CLI folders are in user's .gitignore
+    const { GitManager } = await import('../utils/git');
+    const git = new GitManager();
+    await git.ensureWizardLogsIgnored();
+
     const spinner = ora('Analyzing project compatibility...').start();
 
     // Analyze current project

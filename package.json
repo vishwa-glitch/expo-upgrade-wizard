@@ -35,7 +35,7 @@
     "expo-sdk"
   ],
   "author": "Expo Upgrade Wizard Team",
-  "license": "CC-BY-NC-SA-4.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/expo-upgrade-wizard/expo-upgrade-wizard.git"

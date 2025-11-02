@@ -47,6 +47,11 @@ interface ProjectInfo {
 
 export async function fixHermesErrorsCommand(options: any = {}): Promise<void> {
   try {
+    // Ensure CLI folders are in user's .gitignore
+    const { GitManager } = await import('../utils/git');
+    const git = new GitManager();
+    await git.ensureWizardLogsIgnored();
+
     log.section('🔍 Expo SDK 53 Hermes Error Detection');
     console.log(chalk.gray('Scanning for known Hermes-related issues...\n'));
     

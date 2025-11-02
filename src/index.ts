@@ -18,7 +18,6 @@ import { fixHermesErrorsCommand } from "./commands/fix-hermes-errors";
 import { checkReact19Command } from "./commands/check-react19";
 import { createStateCommand } from "./commands/state";
 import { validateReactCommand } from "./commands/validate-react";
-import { showSdk50GuideCommand } from "./commands/show-sdk50-guide";
 import { log as logger } from "./utils/logger";
 
 const packageJsonPath = path.join(__dirname, "..", "package.json");
@@ -240,18 +239,7 @@ program
     }
   });
 
-// Show SDK 50 guide command
-program
-  .command("guide-sdk50")
-  .description("Show comprehensive SDK 50 breaking changes guide")
-  .action(async () => {
-    try {
-      await showSdk50GuideCommand();
-    } catch (error) {
-      logger.error("Show SDK 50 guide failed:", error);
-      process.exit(1);
-    }
-  });
+
 
 // Interactive mode function
 async function runInteractiveMode() {
@@ -330,7 +318,6 @@ async function runInteractiveMode() {
     "fix-hermes",
     "check-react19",
     "validate-react",
-    "guide-sdk50",
     "help",
   ];
   const hasCommand = args.length > 0 && commands.includes(args[0]);

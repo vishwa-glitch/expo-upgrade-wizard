@@ -12,7 +12,7 @@ export async function collectAutoFixes(projectPath: string, targetSdk: string): 
   if (await fs.pathExists(appJsonPath)) {
     const { autoFixAppJson } = await import('./app-json-fixer');
     const appJson = await fs.readJson(appJsonPath);
-    const { fixed, changes } = autoFixAppJson(appJson, parseInt(targetSdk));
+    const { fixed, changes, packagesToInstall } = autoFixAppJson(appJson, parseInt(targetSdk));
 
     // Filter out warnings and only show actual fixes
     const actualFixes = changes.filter(c => c.type !== 'warning');
@@ -96,6 +96,34 @@ export async function collectAutoFixes(projectPath: string, targetSdk: string): 
           const backupPath = `${appJsonPath}.backup`;
           await fs.copy(appJsonPath, backupPath);
           await fs.writeJson(appJsonPath, fixed, { spaces: 2 });
+          
+          // Add required packages to package.json if any were added
+          if (packagesToInstall && packagesToInstall.length > 0) {
+            const { log } = await import('./logger');
+            const packageJsonPath = path.join(projectPath, 'package.json');
+            
+            if (await fs.pathExists(packageJsonPath)) {
+              const packageJson = await fs.readJson(packageJsonPath);
+              
+              for (const pkg of packagesToInstall) {
+                // Check if package already exists in dependencies or devDependencies
+                if (!packageJson.dependencies?.[pkg] && !packageJson.devDependencies?.[pkg]) {
+                  // Add to dependencies without version (will be resolved during npm install)
+                  if (!packageJson.dependencies) {
+                    packageJson.dependencies = {};
+                  }
+                  packageJson.dependencies[pkg] = '*';
+                  log.info(`📦 Added ${pkg} to package.json dependencies`);
+                }
+              }
+              
+              // Save updated package.json
+              await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+              log.success(`✓ Updated package.json with required packages`);
+              log.info(`   Packages will be installed during the upgrade process`);
+            }
+          }
+          
           return true;
         }
       });

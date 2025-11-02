@@ -31,6 +31,11 @@ export async function checkImprovedCommand(
   options: CheckOptions
 ): Promise<void> {
   try {
+    // Ensure CLI folders are in user's .gitignore
+    const { GitManager } = await import('../utils/git');
+    const git = new GitManager();
+    await git.ensureWizardLogsIgnored();
+
     const spinner = ora("Analyzing project compatibility...").start();
 
     // Analyze current project
@@ -292,7 +297,7 @@ export async function checkImprovedCommand(
     console.log(chalk.gray("  • Test builds"));
     console.log(chalk.gray("  • Guaranteed working app"));
     console.log(chalk.gray("  • 24-48 hour delivery\n"));
-    console.log(chalk.cyan("Apply: https://expo-upgrade.com/service"));
+    console.log(chalk.cyan("Apply: https://exposdkupgrade.tech"));
 
     // Show already resolved issues if any (in detailed mode)
     if (options.detailed) {
