@@ -4,7 +4,7 @@
 </p>
 
 <p align="center">
-  <b>Streamline your Expo SDK upgrades in minutes, not hours</b>
+  <b>Automate Expo SDK upgrades with intelligent breaking change detection</b>
 </p>
 
 <p align="center">
