@@ -84,7 +84,7 @@
     "fs-extra": "^11.3.2",
     "glob": "^10.3.10",
     "gradient-string": "^2.0.2",
-    "inquirer": "^8.2.6",
+    "inquirer": "^12.11.0",
     "listr2": "^9.0.4",
     "node-fetch": "^3.3.2",
     "ora": "^5.4.1",
